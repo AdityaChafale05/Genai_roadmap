@@ -18,7 +18,14 @@ response = httpx.post (
 )
 
 if response.status_code == 200 :
-    print(response.json())
+    data = response.json()
+    reply = data["choices"][0]['message']['content']
+    token_usage = data['usage']['total_tokens']
+    
+    print("By Gork :",reply)
+    print("Token Usage :",token_usage)
+    
+    
 else:
     print("something went wrong : " ,response.status_code,response.text)
     
