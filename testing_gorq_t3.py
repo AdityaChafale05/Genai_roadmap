@@ -31,7 +31,7 @@ def ask_groq (conversation):
         
         
 
-"""
+
 conversation = []
 
 while True :
@@ -49,4 +49,4 @@ while True :
         conversation.append(m2)
         print(f"Groq: {reply} (Tokens: {token_usage})")
         
-        """
+        
