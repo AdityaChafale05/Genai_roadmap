@@ -30,6 +30,7 @@ def ask_groq (conversation):
         return None,None
         
 
+# the subchat ( with memory )
 
 def ask_subchat ( question ,main):
     history_text = ""
@@ -56,6 +57,7 @@ while True :
     if (reply,token_usage) == (None, None):
         print("Error Occured")
         continue
+    
     # try again ( correct)
     elif 'sub'== user_input :
         sub_question = input("Sub-chat, ask your question: ")
