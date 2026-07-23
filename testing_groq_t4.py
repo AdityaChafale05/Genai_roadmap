@@ -59,10 +59,19 @@ while True :
         continue
     
     # try again ( correct)
-    elif 'sub'== user_input :
-        sub_question = input("Sub-chat, ask your question: ")
-        reply, tokens = ask_subchat(sub_question, conversation1)
-        print(f"Sub-chat answer: {reply} (Tokens: {tokens})")
+    elif user_input == 'sub' :
+        
+        print("Arrived in Sub-Chat -- type 'exit' to return to main chat :\n")
+        
+        while True:
+            sub_question = input("Sub-chat, ask your question: ")
+            
+            if sub_question == 'exit':
+                print("Returning to main chat ...")
+                break
+            
+            reply, tokens = ask_subchat(sub_question, conversation1)
+            print(f"Sub-chat answer: {reply} (Tokens: {tokens})")
     
     
     else:
