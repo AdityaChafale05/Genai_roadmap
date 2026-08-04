@@ -77,6 +77,6 @@ while True :
     else:
         m2 = {"role": "assistant" , "content": reply}
         conversation1.append(m2)
-        print(f"Groq: {reply} (Tokens: {token_usage})")
+        print(f"✧(ↀ_ↀ) Groq: {reply} (Tokens: {token_usage})")
         
         
