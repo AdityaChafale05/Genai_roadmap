@@ -1,3 +1,7 @@
+
+##  Simple storage of conversation in a local JSON file for persistent memory.
+
+
 import os
 import json
 import httpx
