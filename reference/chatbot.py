@@ -2,6 +2,7 @@ import os
 import json
 import httpx
 from dotenv import load_dotenv
+from reg_pipeline import save_to_memory , search_memory
 
 load_dotenv()
 API_KEY = os.getenv("api_groq")

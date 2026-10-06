@@ -14,7 +14,7 @@ model = SentenceTransformer('all-MiniLM-L6-v2')
 memory_test = []
 
 
-def compute_value(text,top_n=3):
+def search_memory(text, top_n=3):
     emb1 = model.encode(text)
     rank = []
     
@@ -26,7 +26,7 @@ def compute_value(text,top_n=3):
     return sorted_rank[:top_n]  
 
 
-def save_memory(text):
+def save_to_memory(text):
     embedding = model.encode(text)
     memory_test.append({"text":text, "embedding": embedding})
 
