@@ -2,7 +2,7 @@ import os
 import json
 import httpx
 from dotenv import load_dotenv
-from reg_pipeline import save_to_memory , search_memory
+from rag_pipeline import save_to_memory , search_memory
 
 load_dotenv()
 API_KEY = os.getenv("api_groq")
@@ -21,8 +21,6 @@ else:
     print("No previous memory found. Starting fresh conversation.")
     conversation1 = []
 
-# --- NEW: bookmark tracking how much of conversation1 sub-chat has already seen ---
-last_seen_index = 0
 
 
 def ask_groq(messages):
@@ -55,17 +53,18 @@ def save_memory(conversation):
         json.dump(conversation, f, indent=2)
 
 
-# --- NEW: ask_subchat now takes start_index, only sends NEW main-chat messages ---
-def ask_subchat(question, main, start_index):
-    new_messages = main[start_index:]
-    print(f"[DEBUG] Sub-chat received {len(new_messages)} new message(s) starting from index {start_index}")
+def ask_subchat(question):
+    top_matches = search_memory(question, top_n=3)
+    
+    print(f"[DEBUG] top_matches = {top_matches}") 
     history_text = ""
-    for msg in new_messages:
-        history_text += f"{msg['role']}: {msg['content']}\n"
+    for item in top_matches:
+        history_text += f"{item['text']}\n"
 
     conversation2 = [
         {"role": "user", "content": f"Background:\n{history_text}\nQuestion: {question}"}
     ]
+    print(f"[DEBUG] conversation2 = {conversation2}") 
     reply, tokens = ask_groq(conversation2)
     return reply, tokens
 
@@ -82,20 +81,27 @@ while True:
         break
 
     elif user_input.lower() == 'sub':
-        sub_question = input("Sub-chat, ask your question: ")
-        reply, tokens = ask_subchat(sub_question, conversation1, last_seen_index)
-        if reply:
-            print(f"Sub-chat: {reply} (Tokens: {tokens})")
-        else:
-            print("Sub-chat request failed.")
-        last_seen_index = len(conversation1)   # NEW: update bookmark after sub-chat use
+        print("Entered sub-chat. Type 'exit' to return to main chat.")
+        while True:
+            sub_question = input("Sub-chat: ")
+            if sub_question.lower() == 'exit':
+                print("Returning to main chat.")
+                break
+            reply, tokens = ask_subchat(sub_question)
+            if reply:
+                print(f"Sub-chat .☘︎ ݁˖ : {reply} (Tokens: {tokens})")
+            else:
+                print("Sub-chat request failed.")
         continue
 
     conversation1.append({"role": "user", "content": user_input})
+    save_to_memory(user_input)
+    
     reply, usage = ask_groq(conversation1)
     if reply:
         print(f"\n ✧(ↀ_ↀ)  Assistant: {reply}")
         conversation1.append({"role": "assistant", "content": reply})
+        save_to_memory(reply)
         save_memory(conversation1)
     else:
         conversation1.pop()
