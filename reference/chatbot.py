@@ -21,6 +21,13 @@ else:
     print("No previous memory found. Starting fresh conversation.")
     conversation1 = []
 
+rebuilt = 0
+for msg in conversation1:
+    save_to_memory(msg["content"])
+    rebuilt += 1
+print(f"Rebuilt {rebuilt} messages into searchable memory.")
+    
+    
 
 
 def ask_groq(messages):
@@ -95,13 +102,22 @@ while True:
         continue
 
     conversation1.append({"role": "user", "content": user_input})
-    save_to_memory(user_input)
+    
     
     reply, usage = ask_groq(conversation1)
     if reply:
         print(f"\n ✧(ↀ_ↀ)  Assistant: {reply}")
+        try:
+            save_to_memory(user_input)
+        except Exception as e:
+            print(f"Memory warning: could not save user message: {e}")
+
         conversation1.append({"role": "assistant", "content": reply})
-        save_to_memory(reply)
+        try:
+            save_to_memory(reply)
+        except Exception as e:
+            print(f"Memory warning: could not save assistant reply: {e}")
+
         save_memory(conversation1)
     else:
         conversation1.pop()
